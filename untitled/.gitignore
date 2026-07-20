@@ -35,6 +35,7 @@ Thumbs.db
 /.qmake.cache
 /.qmake.stash
 **/.qmlls.ini
+test.py
 
 # qtcreator generated files
 *.pro.user*
@@ -82,3 +83,4 @@ CMakeLists.txt.user*
 .uic/
 /build*/
 /.qtcreator/
+/containers.txt
