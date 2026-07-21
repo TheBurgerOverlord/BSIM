@@ -24,21 +24,57 @@
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="1">
-      <widget class="QTreeView" name="items"/>
-     </item>
-     <item row="0" column="0">
-      <widget class="QTreeView" name="containers">
-       <property name="uniformRowHeights">
-        <bool>true</bool>
+     <item row="2" column="2">
+      <widget class="QListWidget" name="inventoryList">
+       <property name="supportedDragActions">
+        <set>Qt::DropAction::IgnoreAction</set>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QListView" name="inventory"/>
-     </item>
      <item row="1" column="0">
-      <widget class="QTreeView" name="storage"/>
+      <widget class="QTreeWidget" name="containerTree">
+       <property name="supportedDragActions">
+        <set>Qt::DropAction::IgnoreAction</set>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QTreeWidget" name="itemTree">
+       <property name="supportedDragActions">
+        <set>Qt::DropAction::IgnoreAction</set>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QTreeWidget" name="storageTree">
+       <property name="supportedDragActions">
+        <set>Qt::DropAction::IgnoreAction</set>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -82,8 +118,8 @@
     </property>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuItems"/>
    <addaction name="menuContainers"/>
+   <addaction name="menuItems"/>
    <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -136,12 +172,6 @@
    </property>
   </action>
  </widget>
- <tabstops>
-  <tabstop>containers</tabstop>
-  <tabstop>items</tabstop>
-  <tabstop>storage</tabstop>
-  <tabstop>inventory</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

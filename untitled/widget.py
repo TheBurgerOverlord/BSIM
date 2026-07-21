@@ -1,7 +1,8 @@
 import sys, json
-from PyQt6.QtCore import QDir
-from PySide6.QtWidgets import QApplication, QWidget, QFileDialog
-from PyQt6 import uic
+from PySide6.QtCore import QDir
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QApplication, QFileDialog, QTreeWidgetItem, QMainWindow, QTreeWidget
+from PySide6.QtUiTools import QUiLoader
 
 defaultPath = QDir.homePath()
 
@@ -21,12 +22,10 @@ def getContainer(name):
     return None
 
 def loadContainers(filePath):
-    print("Loading containers from file...")
     with open(filePath) as file:
         dicts = []
         for line in file:
             dicts.append(json.loads(line))
-    print("Building container tree..")
     while len(dicts) > 0:
         for dictionary in dicts:
             if dictionary["parent"] in ContainerTypes:
@@ -34,16 +33,31 @@ def loadContainers(filePath):
                 ContainerTypes.append(dictionary["name"])
                 dicts.remove(dictionary)
 
-class Widget(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("BSIM - v0.0.1 (alpha)")
-    def openFile(self):
-        selectedFile = QFileDialog.getOpenFileUrl()
-        loadContainers(selectedFile[0].toString().split("//")[1])
+def addContainerToTree(parent, grandparent):
+    newNode = QTreeWidgetItem(grandparent,[parent.name + ": " + ", ".join(list(parent.__dict__.keys())[0:-2])])
+    for container in Containers:
+        if parent.name == container.parent:
+            addContainerToTree(container, newNode)
 
-if __name__ == "__main__":
-    app = QApplication([])
-    window = uic.loadUi("../interface.ui")
-    window.show()
-    sys.exit(app.exec())
+def openFile():
+    selectedFile = QFileDialog.getOpenFileUrl()
+    if selectedFile[0].toString() != "":
+        loadContainers(selectedFile[0].toString().split("//")[1])
+        containerTree = mainWindow.findChild(QTreeWidget, "containerTree")
+        contTreeRoot = QTreeWidgetItem([ContainerRoot.name + ": " + ", ".join(list(ContainerRoot.__dict__.keys())[0:-2])])
+        containerTree.addTopLevelItem(contTreeRoot)
+        for container in Containers:
+            if container.name == "root":
+                continue
+            if container.parent == "root":
+                addContainerToTree(container, contTreeRoot)
+
+
+app = QApplication([])
+
+uiLoader = QUiLoader()
+mainWindow = uiLoader.load("../interface.ui")
+mainWindow.findChild(QAction, "actionOpen_Storage").triggered.connect(openFile)
+
+mainWindow.show()
+sys.exit(app.exec())
