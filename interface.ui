@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1080</width>
-    <height>762</height>
+    <width>1070</width>
+    <height>758</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>BSIM</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="gridLayoutWidget">
@@ -31,8 +31,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QTreeWidget" name="containerTree">
+     <item row="2" column="0">
+      <widget class="QTreeWidget" name="storageTree">
        <property name="supportedDragActions">
         <set>Qt::DropAction::IgnoreAction</set>
        </property>
@@ -41,7 +41,7 @@
        </attribute>
        <column>
         <property name="text">
-         <string>1</string>
+         <string notr="true">1</string>
         </property>
        </column>
       </widget>
@@ -61,8 +61,8 @@
        </column>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QTreeWidget" name="storageTree">
+     <item row="1" column="0">
+      <widget class="QTreeWidget" name="containerTree">
        <property name="supportedDragActions">
         <set>Qt::DropAction::IgnoreAction</set>
        </property>
@@ -71,7 +71,7 @@
        </attribute>
        <column>
         <property name="text">
-         <string notr="true">1</string>
+         <string>1</string>
         </property>
        </column>
       </widget>
@@ -84,8 +84,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1080</width>
-     <height>27</height>
+     <width>1070</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -101,11 +101,19 @@
     <property name="title">
      <string>Items</string>
     </property>
+    <addaction name="actionNew_Item"/>
+    <addaction name="actionRemove_Item"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_Items"/>
    </widget>
    <widget class="QMenu" name="menuContainers">
     <property name="title">
      <string>Containers</string>
     </property>
+    <addaction name="actionNew_Container"/>
+    <addaction name="actionRemove_Container"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_Containers"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -169,6 +177,72 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionNew_Container">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+   </property>
+   <property name="text">
+    <string>New Container...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+N</string>
+   </property>
+  </action>
+  <action name="actionRemove_Container">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListRemove"/>
+   </property>
+   <property name="text">
+    <string>Remove Container...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+R</string>
+   </property>
+  </action>
+  <action name="actionImport_Containers">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+   </property>
+   <property name="text">
+    <string>Import Containers...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+I</string>
+   </property>
+  </action>
+  <action name="actionNew_Item">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+   </property>
+   <property name="text">
+    <string>New Item...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+N</string>
+   </property>
+  </action>
+  <action name="actionRemove_Item">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListRemove"/>
+   </property>
+   <property name="text">
+    <string>Remove Item...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+R</string>
+   </property>
+  </action>
+  <action name="actionImport_Items">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+   </property>
+   <property name="text">
+    <string>Import Items...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+I</string>
    </property>
   </action>
  </widget>
