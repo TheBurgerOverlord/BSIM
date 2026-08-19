@@ -6,85 +6,115 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1070</width>
-    <height>758</height>
+    <width>776</width>
+    <height>624</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>1</horstretch>
+    <verstretch>1</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>BSIM</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="gridLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>-1</y>
-      <width>1071</width>
-      <height>711</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="2">
-      <widget class="QListWidget" name="inventoryList">
-       <property name="supportedDragActions">
-        <set>Qt::DropAction::IgnoreAction</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QTreeWidget" name="storageTree">
-       <property name="supportedDragActions">
-        <set>Qt::DropAction::IgnoreAction</set>
-       </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
-       </attribute>
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>1</horstretch>
+     <verstretch>1</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="0,0,0">
+      <property name="sizeConstraint">
+       <enum>QLayout::SizeConstraint::SetNoConstraint</enum>
+      </property>
+      <property name="leftMargin">
+       <number>1</number>
+      </property>
+      <property name="topMargin">
+       <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>1</number>
+      </property>
+      <item row="2" column="2">
+       <widget class="QListWidget" name="inventoryList">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-       </column>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QTreeWidget" name="itemTree">
-       <property name="supportedDragActions">
-        <set>Qt::DropAction::IgnoreAction</set>
-       </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
-       </attribute>
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
+        <property name="supportedDragActions">
+         <set>Qt::DropAction::IgnoreAction</set>
         </property>
-       </column>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QTreeWidget" name="containerTree">
-       <property name="supportedDragActions">
-        <set>Qt::DropAction::IgnoreAction</set>
-       </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
-       </attribute>
-       <column>
-        <property name="text">
-         <string>1</string>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QTreeWidget" name="containerTree">
+        <property name="supportedDragActions">
+         <set>Qt::DropAction::IgnoreAction</set>
         </property>
-       </column>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QTreeWidget" name="itemTree">
+        <property name="supportedDragActions">
+         <set>Qt::DropAction::IgnoreAction</set>
+        </property>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QTreeWidget" name="storageTree">
+        <property name="supportedDragActions">
+         <set>Qt::DropAction::IgnoreAction</set>
+        </property>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1070</width>
+     <width>776</width>
      <height>20</height>
     </rect>
    </property>

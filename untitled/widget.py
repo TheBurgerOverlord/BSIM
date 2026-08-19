@@ -1,6 +1,5 @@
 import sys, json
 from zipfile import ZipFile
-from PySide6.QtCore import QDir
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QFileDialog, QTreeWidgetItem, QMainWindow, QTreeWidget, QMenu, QMessageBox, \
     QDialogButtonBox, QLineEdit, QPlainTextEdit
@@ -136,6 +135,8 @@ def openDir():
 
 def newContainerOpenGUI():
     loadContainersToTree(selectContainer)
+    containerPropertyInput.clear()
+    containerNameInput.clear()
     newContWindow.show()
 
 def newContainerProcess():
@@ -170,6 +171,8 @@ def newContainerProcess():
 
 def newItemOpenGUI():
     loadItemsToTree(selectItem)
+    itemNameInput.clear()
+    itemPropertyInput.clear()
     newItemWindow.show()
 
 def newItemProcess():
