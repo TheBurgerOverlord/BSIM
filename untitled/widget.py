@@ -12,7 +12,7 @@ class Container:
         self.parent = parent
         self.name = name
 
-ContainerRoot = type("ContainerRoot", (Container,), {"parent":None, "name":"root"})
+ContainerRoot = type("ContainerRoot", (Container,), {"parent":None,"name":"root"})
 Containers = [ContainerRoot]
 ContainerTypes = ['root']
 
@@ -113,7 +113,18 @@ def loadItemsToTree(tree):
 
 # other stuff
 
-def openDir():
+def newFile():
+    global Containers, Items, ContainerTypes, ItemTypes, currentFile
+    Containers = [ContainerRoot]
+    Items = [ItemRoot]
+    ContainerTypes = ['root']
+    ItemTypes = ['root']
+    loadContainersToTree(containerTree)
+    loadItemsToTree(itemTree)
+    currentFile = None
+    mainWindow.setWindowTitle("BSIM - New File")
+
+def openFile():
     selectedFile = QFileDialog.getOpenFileUrl()[0].toString().split("//")[1]
     if selectedFile != "":
         try:
@@ -132,6 +143,35 @@ def openDir():
     global currentFile
     currentFile = selectedFile
     mainWindow.setWindowTitle(f"BSIM - {currentFile}")
+
+def saveToFile(file):
+    global wasEdited
+    containerString = ""
+    for container in Containers:
+        if container.name == "root":
+            continue
+        dictionary = dict(container.__dict__)
+        dictionary.pop("__module__")
+        dictionary.pop("__doc__")
+        containerString += json.dumps(dictionary) + "\n"
+    itemString = ""
+    for item in Items:
+        if item.name == "root":
+            continue
+        dictionary = dict(item.__dict__)
+        dictionary.pop("__module__")
+        dictionary.pop("__doc__")
+        itemString += json.dumps(dictionary) + "\n"
+    with ZipFile(file, "w") as openZip:
+        openZip.writestr("containers.txt", containerString)
+        openZip.writestr("items.txt", itemString)
+    wasEdited = False
+
+def beginSave():
+    global currentFile
+    if not currentFile:
+        currentFile = QFileDialog.getSaveFileUrl()[0].toString().split("//")[1]
+    saveToFile(currentFile)
 
 def newContainerOpenGUI():
     loadContainersToTree(selectContainer)
@@ -168,6 +208,8 @@ def newContainerProcess():
         return
     addContainer(name, parent, properties)
     loadContainersToTree(containerTree)
+    global wasEdited
+    wasEdited = True
 
 def newItemOpenGUI():
     loadItemsToTree(selectItem)
@@ -204,7 +246,10 @@ def newItemProcess():
         return
     addItem(name, parent, properties)
     loadItemsToTree(itemTree)
+    global wasEdited
+    wasEdited = True
 
+wasEdited = False
 currentFile = None
 
 app = QApplication([])
@@ -217,7 +262,10 @@ newItemWindow = uiLoader.load("../newItem.ui")
 containerTree = mainWindow.findChild(QTreeWidget, "containerTree")
 itemTree = mainWindow.findChild(QTreeWidget, "itemTree")
 
-mainWindow.findChild(QAction, "actionOpen_Storage").triggered.connect(openDir)
+mainWindow.findChild(QAction, "actionNew_Storage").triggered.connect(newFile)
+mainWindow.findChild(QAction, "actionOpen_Storage").triggered.connect(openFile)
+mainWindow.findChild(QAction, "actionSave_Storage").triggered.connect(beginSave)
+
 mainWindow.findChild(QAction, "actionNew_Container").triggered.connect(newContainerOpenGUI)
 mainWindow.findChild(QAction, "actionNew_Item").triggered.connect(newItemOpenGUI)
 
@@ -232,5 +280,7 @@ itemPropertyInput = newItemWindow.findChild(QPlainTextEdit, "propertyInput")
 newContWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newContainerProcess)
 newItemWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newItemProcess)
 
+loadContainersToTree(containerTree)
+loadItemsToTree(itemTree)
 mainWindow.show()
 sys.exit(app.exec())
