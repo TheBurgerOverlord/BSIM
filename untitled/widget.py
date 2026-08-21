@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from PySide6.QtGui import QAction
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QFileDialog, QTreeWidgetItem, QTreeWidget, QMessageBox, \
-    QDialogButtonBox, QLineEdit, QPlainTextEdit, QListView, QListWidget
+    QDialogButtonBox, QLineEdit, QPlainTextEdit, QListView, QListWidget, QCheckBox
 
 
 # CONTAINERS
@@ -17,7 +17,7 @@ class Container:
         self.parent = parent
         self.name = name
 
-ContainerRoot = type("ContainerRoot", (Container,), {"parent":None,"name":"root","displayName":"Container","storageID":"root"})
+ContainerRoot = type("ContainerRoot", (Container,), {"parent":None,"name":"root","displayName":"Container","storageID":"root","isContainer":True})
 Containers = [ContainerRoot]
 ContainerTypes = ['root']
 
@@ -70,7 +70,7 @@ class Item:
         self.parent = parent
         self.name = name
 
-ItemRoot = type("ItemRoot", (Item,), {"parent":None,"name":"root","displayName":"Item","storageID":"root"})
+ItemRoot = type("ItemRoot", (Item,), {"parent":None,"name":"root","displayName":"Item","storageID":"root","isContainer":False})
 Items = [ItemRoot]
 ItemTypes = ['root']
 
@@ -456,12 +456,39 @@ def saveChangesDialog():
     else:
         return True
 
+def getContainersFromStorage(item):
+    global lastSelectedElement
+    container = getContainer(item.text(0).split(":")[0])
+    lastSelectedElement = container
+    applyFilterToList()
+
+def getItemsFromStorage(item):
+    global lastSelectedElement
+    item = getItem(item.text(0).split(":")[0])
+    lastSelectedElement = item
+    applyFilterToList()
+
+def applyFilterToList():
+    global lastSelectedElement, lastSelectedList
+    inventoryList.clear()
+    lastSelectedList = []
+    for element in Storage:
+        if filterBar.text() not in element.name and filterBar.text() not in element.displayName:
+            continue
+        if element.name == lastSelectedElement.name and element.isContainer == lastSelectedElement.isContainer:
+            lastSelectedList.append(element.displayName)
+        elif lastSelectedElement.__mro__[0] in element.__mro__ and includeInheritance.isChecked():
+            lastSelectedList.append(element.displayName)
+    inventoryList.addItems(lastSelectedList)
+
 # INTERFACE LOADER
 
 addingContainer = False
 wasEdited = False
 currentFile = None
 latestProperties = []
+lastSelectedElement = None
+lastSelectedList = []
 
 app = QApplication([])
 uiLoader = QUiLoader()
@@ -476,6 +503,9 @@ addElementWindow = uiLoader.load("../addToStorage.ui")
 containerTree = mainWindow.findChild(QTreeWidget, "containerTree")
 itemTree = mainWindow.findChild(QTreeWidget, "itemTree")
 storageTree = mainWindow.findChild(QTreeWidget, "storageTree")
+inventoryList = mainWindow.findChild(QListWidget, "inventoryList")
+filterBar = mainWindow.findChild(QLineEdit, "filterBar")
+includeInheritance = mainWindow.findChild(QCheckBox, "includeInheritance")
 
 selectContainer = newContWindow.findChild(QTreeWidget, "contSelector")
 containerNameInput = newContWindow.findChild(QLineEdit, "nameInput")
@@ -508,6 +538,10 @@ newContWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newConta
 newItemWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newItemProcess)
 addElementWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(addElementToStorageProcess)
 
+containerTree.itemClicked.connect(getContainersFromStorage)
+itemTree.itemClicked.connect(getItemsFromStorage)
+filterBar.textChanged.connect(applyFilterToList)
+includeInheritance.stateChanged.connect(applyFilterToList)
 storageTree.itemDoubleClicked.connect(showProperties)
 
 typeSelect.itemSelectionChanged.connect(loadPropertiesOfElement)
