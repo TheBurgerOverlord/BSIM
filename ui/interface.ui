@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>979</width>
+    <height>696</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>1</horstretch>
+    <verstretch>1</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>BSIM</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="QIcon::ThemeIcon::SecurityHigh"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>1</horstretch>
+     <verstretch>1</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="1" column="0">
+     <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="0,0,0">
+      <property name="sizeConstraint">
+       <enum>QLayout::SizeConstraint::SetNoConstraint</enum>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="1" column="0">
+       <widget class="QTreeWidget" name="containerTree">
+        <property name="supportedDragActions">
+         <set>Qt::DropAction::IgnoreAction</set>
+        </property>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QTreeWidget" name="storageTree">
+        <property name="columnCount">
+         <number>2</number>
+        </property>
+        <property name="supportedDragActions">
+         <set>Qt::DropAction::IgnoreAction</set>
+        </property>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string notr="true">2</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="2" column="0">
+         <widget class="QLineEdit" name="filterBar"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="includeInheritance">
+          <property name="text">
+           <string>Inheritance</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QListWidget" name="inventoryList">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>2</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="supportedDragActions">
+           <set>Qt::DropAction::IgnoreAction</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="1">
+       <widget class="QTreeWidget" name="itemTree">
+        <property name="supportedDragActions">
+         <set>Qt::DropAction::IgnoreAction</set>
+        </property>
+        <attribute name="headerVisible">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>979</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew_Storage"/>
+    <addaction name="actionOpen_Storage"/>
+    <addaction name="actionSave_Storage"/>
+    <addaction name="actionSave_Storage_As"/>
+   </widget>
+   <widget class="QMenu" name="menuItems">
+    <property name="title">
+     <string>Items</string>
+    </property>
+    <addaction name="actionNew_Item"/>
+    <addaction name="actionRemove_Item"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_Items"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_Item"/>
+   </widget>
+   <widget class="QMenu" name="menuContainers">
+    <property name="title">
+     <string>Containers</string>
+    </property>
+    <addaction name="actionNew_Container"/>
+    <addaction name="actionRemove_Container"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_Containers"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_Container"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuContainers"/>
+   <addaction name="menuItems"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNew_Storage">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentNew"/>
+   </property>
+   <property name="text">
+    <string>New Storage...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOpen_Storage">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentOpen"/>
+   </property>
+   <property name="text">
+    <string>Open Storage...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave_Storage">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentSave"/>
+   </property>
+   <property name="text">
+    <string>Save Storage</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_Storage_As">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentSaveAs"/>
+   </property>
+   <property name="text">
+    <string>Save Storage As...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionNew_Container">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+   </property>
+   <property name="text">
+    <string>New Container...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+N</string>
+   </property>
+  </action>
+  <action name="actionRemove_Container">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListRemove"/>
+   </property>
+   <property name="text">
+    <string>Remove Container...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+R</string>
+   </property>
+  </action>
+  <action name="actionImport_Containers">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+   </property>
+   <property name="text">
+    <string>Import Containers...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+I</string>
+   </property>
+  </action>
+  <action name="actionNew_Item">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+   </property>
+   <property name="text">
+    <string>New Item...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+N</string>
+   </property>
+  </action>
+  <action name="actionRemove_Item">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListRemove"/>
+   </property>
+   <property name="text">
+    <string>Remove Item...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+R</string>
+   </property>
+  </action>
+  <action name="actionImport_Items">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+   </property>
+   <property name="text">
+    <string>Import Items...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+I</string>
+   </property>
+  </action>
+  <action name="actionAdd_Container">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::FolderNew"/>
+   </property>
+   <property name="text">
+    <string>Add Container to Storage...</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+A</string>
+   </property>
+  </action>
+  <action name="actionAdd_Item">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::FolderNew"/>
+   </property>
+   <property name="text">
+    <string>Add Item to Storage...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+A</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
