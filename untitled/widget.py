@@ -199,10 +199,13 @@ def newFile():
     currentFile = None
     mainWindow.setWindowTitle("BSIM - New File")
 
-def openFile():
+def openFile(file=None):
     if not saveChangesDialog():
         return
-    selectedFile = QFileDialog.getOpenFileUrl()[0].toString().split("//")[1]
+    if not file:
+        selectedFile = QFileDialog.getOpenFileUrl()[0].toString().split("//")[1]
+    else:
+        selectedFile = file
     if selectedFile != "":
         try:
             ZipFile(selectedFile, "r")
@@ -548,7 +551,9 @@ typeSelect.itemSelectionChanged.connect(loadPropertiesOfElement)
 
 # LAUNCH
 
-newFile()
-loadStorageToTree(storageTree)
+if len(sys.argv)>1:
+    openFile(sys.argv[1])
+else:
+    newFile()
 mainWindow.show()
 sys.exit(app.exec())
