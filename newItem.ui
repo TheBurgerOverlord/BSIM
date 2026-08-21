@@ -6,79 +6,55 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
-    <height>336</height>
+    <width>596</width>
+    <height>437</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>New Item...</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>300</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Orientation::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
-   </property>
-   <property name="centerButtons">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QTreeWidget" name="itemSelector">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>256</width>
-     <height>281</height>
-    </rect>
-   </property>
-   <property name="rootIsDecorated">
-    <bool>false</bool>
-   </property>
-   <property name="sortingEnabled">
-    <bool>false</bool>
-   </property>
-   <property name="supportedDragActions">
-    <set>Qt::DropAction::IgnoreAction</set>
-   </property>
-   <attribute name="headerVisible">
-    <bool>false</bool>
-   </attribute>
-   <column>
-    <property name="text">
-     <string notr="true">1</string>
-    </property>
-   </column>
-  </widget>
-  <widget class="QPlainTextEdit" name="propertyInput">
-   <property name="geometry">
-    <rect>
-     <x>280</x>
-     <y>50</y>
-     <width>281</width>
-     <height>241</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="nameInput">
-   <property name="geometry">
-    <rect>
-     <x>280</x>
-     <y>20</y>
-     <width>281</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" rowspan="2">
+    <widget class="QTreeWidget" name="itemSelector">
+     <property name="rootIsDecorated">
+      <bool>false</bool>
+     </property>
+     <property name="sortingEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="supportedDragActions">
+      <set>Qt::DropAction::IgnoreAction</set>
+     </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="nameInput"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPlainTextEdit" name="propertyInput"/>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>

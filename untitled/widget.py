@@ -1,9 +1,14 @@
-import sys, json
+# IMPORTS
+
+import json
+import sys
 from zipfile import ZipFile
+
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QApplication, QFileDialog, QTreeWidgetItem, QMainWindow, QTreeWidget, QMenu, QMessageBox, \
-    QDialogButtonBox, QLineEdit, QPlainTextEdit
 from PySide6.QtUiTools import QUiLoader
+from PySide6.QtWidgets import QApplication, QFileDialog, QTreeWidgetItem, QTreeWidget, QMessageBox, \
+    QDialogButtonBox, QLineEdit, QPlainTextEdit, QListView, QListWidget
+
 
 # CONTAINERS
 
@@ -12,7 +17,7 @@ class Container:
         self.parent = parent
         self.name = name
 
-ContainerRoot = type("ContainerRoot", (Container,), {"parent":None,"name":"root"})
+ContainerRoot = type("ContainerRoot", (Container,), {"parent":None,"name":"root","displayName":"Container","storageID":"root"})
 Containers = [ContainerRoot]
 ContainerTypes = ['root']
 
@@ -65,7 +70,7 @@ class Item:
         self.parent = parent
         self.name = name
 
-ItemRoot = type("ItemRoot", (Item,), {"parent":None, "name":"root"})
+ItemRoot = type("ItemRoot", (Item,), {"parent":None,"name":"root","displayName":"Item","storageID":"root"})
 Items = [ItemRoot]
 ItemTypes = ['root']
 
@@ -111,16 +116,59 @@ def loadItemsToTree(tree):
         if item.parent == "root":
             addItemToTree(item, itemTreeRoot)
 
-# other stuff
+# STORAGE
+
+StorageRoot = type("StorageRoot", (ContainerRoot,), {"parent":None, "name":"root","displayName":"StorageRoot","storageID":0})
+Storage = [StorageRoot]
+StorageIDs = [0]
+
+def getElementByID(id):
+    for element in Storage:
+        if element.storageID == id:
+            return element
+    return None
+
+def addContainerToStorage(containerName, storageParentID, displayName, properties):
+    storageID = max(StorageIDs) + 1
+    parentNameDict = {"name":containerName, "parent":int(storageParentID), "displayName":displayName, "storageID":storageID}
+    Storage.append(type(containerName, (getContainer(containerName),), parentNameDict|properties))
+    StorageIDs.append(storageID)
+
+def addItemToStorage(itemName, storageParentID, displayName, properties):
+    storageID = max(StorageIDs) + 1
+    parentNameDict = {"name":itemName, "parent":int(storageParentID), "displayName":displayName, "storageID":storageID}
+    Storage.append(type(itemName, (getItem(itemName),), parentNameDict|properties))
+    StorageIDs.append(storageID)
+
+def addElementToTree(parent, grandparent):
+    newNode = QTreeWidgetItem(grandparent)
+    newNode.setText(0, str(parent.storageID))
+    newNode.setText(1, parent.displayName)
+    for element in Storage:
+        if parent.storageID == element.parent:
+            addElementToTree(element, newNode)
+
+def loadStorageToTree(tree):
+    tree.clear()
+    storageTreeRoot = QTreeWidgetItem([str(StorageRoot.storageID), StorageRoot.displayName])
+    tree.addTopLevelItem(storageTreeRoot)
+    for element in Storage:
+        if element.storageID == 0:
+            continue
+        if element.parent == 0:
+            addElementToTree(element, storageTreeRoot)
+
+# FILE MANAGEMENT
 
 def newFile():
-    global Containers, Items, ContainerTypes, ItemTypes, currentFile
+    global Containers, Items, ContainerTypes, ItemTypes, currentFile, wasEdited
     Containers = [ContainerRoot]
     Items = [ItemRoot]
     ContainerTypes = ['root']
     ItemTypes = ['root']
     loadContainersToTree(containerTree)
     loadItemsToTree(itemTree)
+    wasEdited = False
     currentFile = None
     mainWindow.setWindowTitle("BSIM - New File")
 
@@ -166,12 +214,19 @@ def saveToFile(file):
         openZip.writestr("containers.txt", containerString)
         openZip.writestr("items.txt", itemString)
     wasEdited = False
+    mainWindow.setWindowTitle(f"BSIM - {currentFile}")
 
-def beginSave():
+def Save():
     global currentFile
     if not currentFile:
         currentFile = QFileDialog.getSaveFileUrl()[0].toString().split("//")[1]
     saveToFile(currentFile)
+
+def SaveAs():
+    currentFile = QFileDialog.getSaveFileUrl()[0].toString().split("//")[1]
+    saveToFile(currentFile)
+
+# GUI
 
 def newContainerOpenGUI():
     loadContainersToTree(selectContainer)
@@ -210,6 +265,7 @@ def newContainerProcess():
     loadContainersToTree(containerTree)
     global wasEdited
     wasEdited = True
+    mainWindow.setWindowTitle(f"BSIM - {currentFile}*")
 
 def newItemOpenGUI():
     loadItemsToTree(selectItem)
@@ -248,9 +304,91 @@ def newItemProcess():
     loadItemsToTree(itemTree)
     global wasEdited
     wasEdited = True
+    mainWindow.setWindowTitle(f"BSIM - {currentFile}*")
 
+def addContainerToStorageGUI():
+    global addingContainer
+    addingContainer = True
+    loadContainersToTree(typeSelect)
+    loadStorageToTree(locationSelect)
+    elementNameInput.clear()
+    elementPropertyInput.clear()
+    addElementWindow.show()
+
+def addItemToStorageGUI():
+    global addingContainer
+    addingContainer = False
+    loadItemsToTree(typeSelect)
+    loadStorageToTree(locationSelect)
+    elementNameInput.clear()
+    elementPropertyInput.clear()
+    addElementWindow.show()
+
+def loadPropertiesOfElement():
+    global latestProperties
+    unwanted = ["name", "storageID", "parent", "displayName"]
+    propertiesList.clear()
+    elementName = typeSelect.selectedItems()[0].text(0).split(":")[0]
+    if addingContainer:
+        element = getContainer(elementName)
+    else:
+        element = getItem(elementName)
+    properties = dir(element)[27:]
+    properties = [property for property in properties if property not in unwanted]
+    propertiesList.addItems(properties)
+    latestProperties = properties
+
+def addElementToStorageProcess():
+    properties = {}
+    enteredProperties = elementPropertyInput.toPlainText().splitlines()
+    if len(latestProperties) != len(enteredProperties):
+        msg = QMessageBox()
+        msg.setText("Number of properties and values do not match")
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Error")
+        msg.exec()
+        return
+    for i in range(len(latestProperties)):
+        properties[latestProperties[i]] = enteredProperties[i]
+    name = elementNameInput.text()
+    if not name:
+        msg = QMessageBox()
+        msg.setText("Element must have a name")
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Error")
+        msg.exec()
+        return
+    location = locationSelect.selectedItems()[0].text(0)
+    if not location:
+        msg = QMessageBox()
+        msg.setText("Element needs a location")
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Error")
+        msg.exec()
+        return
+    elementType = typeSelect.selectedItems()[0].text(0).split(":")[0]
+    if not elementType:
+        msg = QMessageBox()
+        msg.setText("Element needs a type")
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Error")
+        msg.exec()
+        return
+    if addingContainer:
+        addContainerToStorage(elementType,location,name,properties)
+    else:
+        addItemToStorage(elementType,location,name,properties)
+    loadStorageToTree(storageTree)
+    global wasEdited
+    wasEdited = True
+    mainWindow.setWindowTitle(f"BSIM - {currentFile}*")
+
+# INTERFACE LOADER
+
+addingContainer = False
 wasEdited = False
 currentFile = None
+latestProperties = []
 
 app = QApplication([])
 uiLoader = QUiLoader()
@@ -258,16 +396,13 @@ uiLoader = QUiLoader()
 mainWindow = uiLoader.load("../interface.ui")
 newContWindow = uiLoader.load("../newCont.ui")
 newItemWindow = uiLoader.load("../newItem.ui")
+addElementWindow = uiLoader.load("../addToStorage.ui")
+
+# ELEMENT DECLARATIONS
 
 containerTree = mainWindow.findChild(QTreeWidget, "containerTree")
 itemTree = mainWindow.findChild(QTreeWidget, "itemTree")
-
-mainWindow.findChild(QAction, "actionNew_Storage").triggered.connect(newFile)
-mainWindow.findChild(QAction, "actionOpen_Storage").triggered.connect(openFile)
-mainWindow.findChild(QAction, "actionSave_Storage").triggered.connect(beginSave)
-
-mainWindow.findChild(QAction, "actionNew_Container").triggered.connect(newContainerOpenGUI)
-mainWindow.findChild(QAction, "actionNew_Item").triggered.connect(newItemOpenGUI)
+storageTree = mainWindow.findChild(QTreeWidget, "storageTree")
 
 selectContainer = newContWindow.findChild(QTreeWidget, "contSelector")
 containerNameInput = newContWindow.findChild(QLineEdit, "nameInput")
@@ -277,10 +412,34 @@ selectItem = newItemWindow.findChild(QTreeWidget, "itemSelector")
 itemNameInput = newItemWindow.findChild(QLineEdit, "nameInput")
 itemPropertyInput = newItemWindow.findChild(QPlainTextEdit, "propertyInput")
 
+locationSelect = addElementWindow.findChild(QTreeWidget, "locationSelect")
+typeSelect = addElementWindow.findChild(QTreeWidget, "typeSelect")
+propertiesList = addElementWindow.findChild(QListWidget, "propertiesList")
+elementNameInput = addElementWindow.findChild(QLineEdit, "nameInput")
+elementPropertyInput = addElementWindow.findChild(QPlainTextEdit, "propertyInput")
+
+# SIGNAL CONNECTION
+
+mainWindow.findChild(QAction, "actionNew_Storage").triggered.connect(newFile)
+mainWindow.findChild(QAction, "actionOpen_Storage").triggered.connect(openFile)
+mainWindow.findChild(QAction, "actionSave_Storage").triggered.connect(Save)
+mainWindow.findChild(QAction, "actionSave_Storage_As").triggered.connect(Save)
+
+mainWindow.findChild(QAction, "actionNew_Container").triggered.connect(newContainerOpenGUI)
+mainWindow.findChild(QAction, "actionNew_Item").triggered.connect(newItemOpenGUI)
+
+mainWindow.findChild(QAction, "actionAdd_Container").triggered.connect(addContainerToStorageGUI)
+mainWindow.findChild(QAction, "actionAdd_Item").triggered.connect(addItemToStorageGUI)
+
 newContWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newContainerProcess)
 newItemWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newItemProcess)
+addElementWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(addElementToStorageProcess)
 
-loadContainersToTree(containerTree)
-loadItemsToTree(itemTree)
+typeSelect.itemSelectionChanged.connect(loadPropertiesOfElement)
+
+# LAUNCH
+
+newFile()
+loadStorageToTree(storageTree)
 mainWindow.show()
 sys.exit(app.exec())
