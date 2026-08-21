@@ -183,6 +183,8 @@ def loadStorageToTree(tree):
 # FILE MANAGEMENT
 
 def newFile():
+    if not saveChangesDialog():
+        return
     global Containers, Items, ContainerTypes, ItemTypes, Storage, StorageIDs, currentFile, wasEdited
     Containers = [ContainerRoot]
     Items = [ItemRoot]
@@ -198,6 +200,8 @@ def newFile():
     mainWindow.setWindowTitle("BSIM - New File")
 
 def openFile():
+    if not saveChangesDialog():
+        return
     selectedFile = QFileDialog.getOpenFileUrl()[0].toString().split("//")[1]
     if selectedFile != "":
         try:
@@ -239,7 +243,6 @@ def saveToFile(file):
         itemString += json.dumps(dictionary) + "\n"
     storageString = ""
     for element in Storage:
-        print(element.parent)
         if element.parent == None:
             continue
         dictionary = dict(element.__dict__)
@@ -431,6 +434,27 @@ def showProperties(item):
     msg.setWindowTitle(element.displayName)
     msg.setIcon(QMessageBox.Icon.Information)
     msg.exec()
+
+def saveChangesDialog():
+    global wasEdited
+    if wasEdited:
+        msg = QMessageBox()
+        msg.setText("The document has been modified")
+        msg.setInformativeText("Do you want to save changes?")
+        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setWindowTitle("Unsaved changes")
+        msg.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.StandardButton.Cancel)
+        result = msg.exec()
+        match result:
+            case QMessageBox.Save:
+                Save()
+                return True
+            case QMessageBox.Discard:
+                return True
+            case QMessageBox.StandardButtons.Cancel:
+                return False
+    else:
+        return True
 
 # INTERFACE LOADER
 
