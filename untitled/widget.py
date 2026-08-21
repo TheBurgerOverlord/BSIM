@@ -118,7 +118,7 @@ def loadItemsToTree(tree):
 
 # STORAGE
 
-StorageRoot = type("StorageRoot", (ContainerRoot,), {"parent":None, "name":"root","displayName":"StorageRoot","storageID":0})
+StorageRoot = type("StorageRoot", (ContainerRoot,), {"parent":None, "name":"root","displayName":"StorageRoot","storageID":0,"isContainer":True})
 Storage = [StorageRoot]
 StorageIDs = [0]
 
@@ -128,17 +128,39 @@ def getElementByID(id):
             return element
     return None
 
-def addContainerToStorage(containerName, storageParentID, displayName, properties):
-    storageID = max(StorageIDs) + 1
-    parentNameDict = {"name":containerName, "parent":int(storageParentID), "displayName":displayName, "storageID":storageID}
+def addContainerToStorage(containerName, storageParentID, displayName, properties, id=None):
+    if id:
+        storageID = id
+    else:
+        storageID = max(StorageIDs) + 1
+    parentNameDict = {"name":containerName, "parent":int(storageParentID), "displayName":displayName, "storageID":storageID, "isContainer":True}
     Storage.append(type(containerName, (getContainer(containerName),), parentNameDict|properties))
     StorageIDs.append(storageID)
 
-def addItemToStorage(itemName, storageParentID, displayName, properties):
-    storageID = max(StorageIDs) + 1
-    parentNameDict = {"name":itemName, "parent":int(storageParentID), "displayName":displayName, "storageID":storageID}
+def addItemToStorage(itemName, storageParentID, displayName, properties, id=None):
+    if id:
+        storageID = id
+    else:
+        storageID = max(StorageIDs) + 1
+    parentNameDict = {"name":itemName, "parent":int(storageParentID), "displayName":displayName, "storageID":storageID, "isContainer":False}
     Storage.append(type(itemName, (getItem(itemName),), parentNameDict|properties))
     StorageIDs.append(storageID)
+
+def loadStorage(file):
+    global StorageRoot, Storage, StorageIDs
+    Storage = [StorageRoot]
+    StorageIDs = [0]
+    dicts = []
+    for line in file.splitlines():
+        dicts.append(json.loads(line))
+    while len(dicts) > 0:
+        for dictionary in dicts:
+            if dictionary["parent"] in StorageIDs:
+                if dictionary["isContainer"]:
+                    addContainerToStorage(dictionary["name"],dictionary["parent"],dictionary["displayName"],dictionary,dictionary["storageID"])
+                else:
+                    addItemToStorage(dictionary["name"],dictionary["parent"],dictionary["displayName"],dictionary,dictionary["storageID"])
+                dicts.remove(dictionary)
 
 def addElementToTree(parent, grandparent):
     newNode = QTreeWidgetItem(grandparent)
@@ -161,13 +183,16 @@ def loadStorageToTree(tree):
 # FILE MANAGEMENT
 
 def newFile():
-    global Containers, Items, ContainerTypes, ItemTypes, currentFile, wasEdited
+    global Containers, Items, ContainerTypes, ItemTypes, Storage, StorageIDs, currentFile, wasEdited
     Containers = [ContainerRoot]
     Items = [ItemRoot]
+    Storage = [StorageRoot]
     ContainerTypes = ['root']
     ItemTypes = ['root']
+    StorageIDs = [0]
     loadContainersToTree(containerTree)
     loadItemsToTree(itemTree)
+    loadStorageToTree(storageTree)
     wasEdited = False
     currentFile = None
     mainWindow.setWindowTitle("BSIM - New File")
@@ -188,6 +213,8 @@ def openFile():
             loadContainersToTree(containerTree)
             loadItems(zip.read("items.txt").decode())
             loadItemsToTree(itemTree)
+            loadStorage(zip.read("storage.txt").decode())
+            loadStorageToTree(storageTree)
     global currentFile
     currentFile = selectedFile
     mainWindow.setWindowTitle(f"BSIM - {currentFile}")
@@ -210,9 +237,19 @@ def saveToFile(file):
         dictionary.pop("__module__")
         dictionary.pop("__doc__")
         itemString += json.dumps(dictionary) + "\n"
+    storageString = ""
+    for element in Storage:
+        print(element.parent)
+        if element.parent == None:
+            continue
+        dictionary = dict(element.__dict__)
+        dictionary.pop("__module__")
+        dictionary.pop("__doc__")
+        storageString += json.dumps(dictionary) + "\n"
     with ZipFile(file, "w") as openZip:
         openZip.writestr("containers.txt", containerString)
         openZip.writestr("items.txt", itemString)
+        openZip.writestr("storage.txt", storageString)
     wasEdited = False
     mainWindow.setWindowTitle(f"BSIM - {currentFile}")
 
@@ -382,6 +419,9 @@ def addElementToStorageProcess():
     global wasEdited
     wasEdited = True
     mainWindow.setWindowTitle(f"BSIM - {currentFile}*")
+
+#def showProperties()
+
 
 # INTERFACE LOADER
 
