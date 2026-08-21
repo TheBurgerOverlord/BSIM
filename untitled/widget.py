@@ -420,8 +420,17 @@ def addElementToStorageProcess():
     wasEdited = True
     mainWindow.setWindowTitle(f"BSIM - {currentFile}*")
 
-#def showProperties()
-
+def showProperties(item):
+    element = getElementByID(int(item.text(0)))
+    properties = dir(element)[27:]
+    displayProperties = []
+    for property in properties:
+        displayProperties.append(f"{property}: {element.__dict__[property]}")
+    msg = QMessageBox()
+    msg.setText("\n".join(displayProperties))
+    msg.setWindowTitle(element.displayName)
+    msg.setIcon(QMessageBox.Icon.Information)
+    msg.exec()
 
 # INTERFACE LOADER
 
@@ -474,6 +483,8 @@ mainWindow.findChild(QAction, "actionAdd_Item").triggered.connect(addItemToStora
 newContWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newContainerProcess)
 newItemWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newItemProcess)
 addElementWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(addElementToStorageProcess)
+
+storageTree.itemDoubleClicked.connect(showProperties)
 
 typeSelect.itemSelectionChanged.connect(loadPropertiesOfElement)
 
