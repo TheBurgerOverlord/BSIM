@@ -496,10 +496,10 @@ lastSelectedList = []
 app = QApplication([])
 uiLoader = QUiLoader()
 
-mainWindow = uiLoader.load("../interface.ui")
-newContWindow = uiLoader.load("../newCont.ui")
-newItemWindow = uiLoader.load("../newItem.ui")
-addElementWindow = uiLoader.load("../addToStorage.ui")
+mainWindow = uiLoader.load("../ui/interface.ui")
+newContWindow = uiLoader.load("../ui/newCont.ui")
+newItemWindow = uiLoader.load("../ui/newItem.ui")
+addElementWindow = uiLoader.load("../ui/addToStorage.ui")
 
 # ELEMENT DECLARATIONS
 
