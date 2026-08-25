@@ -1,7 +1,9 @@
 # IMPORTS
 
 import json
+import os
 import sys
+from pathlib import Path
 from zipfile import ZipFile
 
 from PySide6.QtGui import QAction
@@ -62,6 +64,7 @@ def loadContainersToTree(tree):
             continue
         if container.parent == "root":
             addContainerToTree(container, contTreeRoot)
+    tree.expandAll()
 
 # ITEMS
 
@@ -115,6 +118,7 @@ def loadItemsToTree(tree):
             continue
         if item.parent == "root":
             addItemToTree(item, itemTreeRoot)
+    tree.expandAll()
 
 # STORAGE
 
@@ -179,6 +183,7 @@ def loadStorageToTree(tree):
             continue
         if element.parent == 0:
             addElementToTree(element, storageTreeRoot)
+    tree.expandAll()
 
 # FILE MANAGEMENT
 
@@ -496,10 +501,12 @@ lastSelectedList = []
 app = QApplication([])
 uiLoader = QUiLoader()
 
-mainWindow = uiLoader.load("../ui/interface.ui")
-newContWindow = uiLoader.load("../ui/newCont.ui")
-newItemWindow = uiLoader.load("../ui/newItem.ui")
-addElementWindow = uiLoader.load("../ui/addToStorage.ui")
+currentDir = "/".join(str(Path(__file__).resolve()).split("/")[0:-2])
+
+mainWindow = uiLoader.load(f"{currentDir}/ui/interface.ui")
+newContWindow = uiLoader.load(f"{currentDir}/ui/newCont.ui")
+newItemWindow = uiLoader.load(f"{currentDir}/ui/newItem.ui")
+addElementWindow = uiLoader.load(f"{currentDir}/ui/addToStorage.ui")
 
 # ELEMENT DECLARATIONS
 
