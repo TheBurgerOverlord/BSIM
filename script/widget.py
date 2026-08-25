@@ -11,7 +11,6 @@ from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QFileDialog, QTreeWidgetItem, QTreeWidget, QMessageBox, \
     QDialogButtonBox, QLineEdit, QPlainTextEdit, QListView, QListWidget, QCheckBox
 
-
 # CONTAINERS
 
 class Container:
@@ -374,14 +373,14 @@ def addItemToStorageGUI():
 
 def loadPropertiesOfElement():
     global latestProperties
-    unwanted = ["name", "storageID", "parent", "displayName"]
+    unwanted = ["name", "storageID", "parent", "displayName", "isContainer"]
     propertiesList.clear()
     elementName = typeSelect.selectedItems()[0].text(0).split(":")[0]
     if addingContainer:
         element = getContainer(elementName)
     else:
         element = getItem(elementName)
-    properties = dir(element)[27:]
+    properties = dir(element)[29:]
     properties = [property for property in properties if property not in unwanted]
     propertiesList.addItems(properties)
     latestProperties = properties
@@ -433,7 +432,7 @@ def addElementToStorageProcess():
 
 def showProperties(item):
     element = getElementByID(int(item.text(0)))
-    properties = dir(element)[27:]
+    properties = dir(element)[29:]
     displayProperties = []
     for property in properties:
         displayProperties.append(f"{property}: {element.__dict__[property]}")

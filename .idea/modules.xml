@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/BSIM.iml" filepath="$PROJECT_DIR$/.idea/BSIM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/PySide Project.iml" filepath="$PROJECT_DIR$/.idea/PySide Project.iml" />
     </modules>
   </component>
 </project>
