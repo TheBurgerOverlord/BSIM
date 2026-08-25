@@ -480,12 +480,13 @@ def applyFilterToList():
     inventoryList.clear()
     lastSelectedList = []
     for element in Storage:
+        elementText = "\t".join([str(element.storageID), element.displayName])
         if filterBar.text() not in element.name and filterBar.text() not in element.displayName:
             continue
         if element.name == lastSelectedElement.name and element.isContainer == lastSelectedElement.isContainer:
-            lastSelectedList.append(element.displayName)
+            lastSelectedList.append(elementText)
         elif lastSelectedElement.__mro__[0] in element.__mro__ and includeInheritance.isChecked():
-            lastSelectedList.append(element.displayName)
+            lastSelectedList.append(elementText)
     inventoryList.addItems(lastSelectedList)
 
 # INTERFACE LOADER
