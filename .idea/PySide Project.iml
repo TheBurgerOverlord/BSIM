@@ -4,7 +4,7 @@
     <content url="file://$MODULE_DIR$/script">
       <excludeFolder url="file://$MODULE_DIR$/script/.venv" />
     </content>
-    <orderEntry type="jdk" jdkName="~/Development/BSIM/script/.venv" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="~/PycharmProjects/BSIM/script/.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

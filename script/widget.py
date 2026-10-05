@@ -385,6 +385,23 @@ def loadPropertiesOfElement():
     propertiesList.addItems(properties)
     latestProperties = properties
 
+def loadPropertiesOfElementToEdit():
+    global latestProperties
+    global lastElement
+    unwanted = ["name", "storageID", "parent", "displayName", "isContainer"]
+    propertiesEditList.clear()
+    if not typeEdit.selectedItems():
+        return
+    elementName = typeEdit.selectedItems()[0].text(0).split(":")[0]
+    if lastElement.isContainer:
+        element = getContainer(elementName)
+    else:
+        element = getItem(elementName)
+    properties = dir(element)[29:]
+    properties = [property for property in properties if property not in unwanted]
+    propertiesEditList.addItems(properties)
+    latestProperties = properties
+
 def addElementToStorageProcess():
     properties = {}
     enteredProperties = elementPropertyInput.toPlainText().splitlines()
@@ -430,25 +447,98 @@ def addElementToStorageProcess():
     wasEdited = True
     mainWindow.setWindowTitle(f"BSIM - {currentFile}*")
 
+def editElement(item):
+    global lastElement
+    element = getElementByID(int(item.text(0)))
+    lastElement = element
+    properties = dir(element)[29:]
+    displayPropertyValues = []
+    for property in properties:
+        if property in ["displayName", "storageID", "parent", "isContainer", "name"]:
+            continue
+        displayPropertyValues.append(element.__dict__[property])
+    elementPropertyEditInput.clear()
+    elementPropertyEditInput.setPlainText("\n".join(displayPropertyValues))
+    propertiesEditList.clear()
+    elementNameEditInput.setText(element.displayName)
+    if element.isContainer:
+        loadContainersToTree(typeEdit)
+    else:
+        loadItemsToTree(typeEdit)
+    editElementWindow.show()
+
+def editElementProcess():
+    global lastElement
+    enteredProperties = elementPropertyEditInput.toPlainText().splitlines()
+    if len(latestProperties) != len(enteredProperties):
+        msg = QMessageBox()
+        msg.setText("Number of properties and values do not match")
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Error")
+        msg.exec()
+        return
+    name = elementNameEditInput.text()
+    if not name:
+        msg = QMessageBox()
+        msg.setText("Element must have a name")
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Error")
+        msg.exec()
+        return
+    elementType = typeEdit.selectedItems()[0].text(0).split(":")[0]
+    if not elementType:
+        msg = QMessageBox()
+        msg.setText("Element needs a type")
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setWindowTitle("Error")
+        msg.exec()
+        return
+    properties = list(lastElement.__dict__.keys())
+    for property in properties:
+        if property not in ["displayName", "storageID", "parent", "isContainer", "name", "__module__", "__doc__"]:
+            if property not in latestProperties:
+                delattr(lastElement, property)
+    for i in range(len(latestProperties)):
+        setattr(lastElement, latestProperties[i], enteredProperties[i])
+    lastElement.displayName = name
+    lastElement.name = elementType
+    loadStorageToTree(storageTree)
+    global wasEdited
+    wasEdited = True
+    mainWindow.setWindowTitle(f"BSIM - {currentFile}*")
+
 def showProperties(item):
     element = getElementByID(int(item.text(0)))
     properties = dir(element)[29:]
+    print(properties)
     displayProperties = []
     for property in properties:
+        if property not in element.__dict__:
+            continue
         displayProperties.append(f"{property}: {element.__dict__[property]}")
     msg = QMessageBox()
     msg.setText("\n".join(displayProperties))
     msg.setWindowTitle(element.displayName)
     msg.setIcon(QMessageBox.Icon.Information)
-    msg.exec()
+    if element.storageID == 0:
+        msg.exec()
+        return
+    msg.setStandardButtons(QMessageBox.StandardButtons.Open | QMessageBox.StandardButtons.Cancel)
+    msg.setDefaultButton(QMessageBox.StandardButtons.Cancel)
+    result = msg.exec()
+    match result:
+        case QMessageBox.StandardButtons.Open:
+            editElement(item)
+        case QMessageBox.StandardButtons.Cancel:
+            pass
 
 def saveChangesDialog():
     global wasEdited
     if wasEdited:
         msg = QMessageBox()
-        msg.setText("The document has been modified")
+        msg.setText("The document has been modified.")
         msg.setInformativeText("Do you want to save changes?")
-        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setIcon(QMessageBox.Icon.Warning)
         msg.setWindowTitle("Unsaved changes")
         msg.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.StandardButton.Cancel)
         result = msg.exec()
@@ -507,6 +597,7 @@ mainWindow = uiLoader.load(f"{currentDir}/ui/interface.ui")
 newContWindow = uiLoader.load(f"{currentDir}/ui/newCont.ui")
 newItemWindow = uiLoader.load(f"{currentDir}/ui/newItem.ui")
 addElementWindow = uiLoader.load(f"{currentDir}/ui/addToStorage.ui")
+editElementWindow = uiLoader.load(f"{currentDir}/ui/editStorage.ui")
 
 # ELEMENT DECLARATIONS
 
@@ -531,6 +622,11 @@ propertiesList = addElementWindow.findChild(QListWidget, "propertiesList")
 elementNameInput = addElementWindow.findChild(QLineEdit, "nameInput")
 elementPropertyInput = addElementWindow.findChild(QPlainTextEdit, "propertyInput")
 
+typeEdit = editElementWindow.findChild(QTreeWidget, "typeSelect")
+propertiesEditList = editElementWindow.findChild(QListWidget, "propertiesList")
+elementNameEditInput = editElementWindow.findChild(QLineEdit, "nameInput")
+elementPropertyEditInput = editElementWindow.findChild(QPlainTextEdit, "propertyInput")
+
 # SIGNAL CONNECTION
 
 mainWindow.findChild(QAction, "actionNew_Storage").triggered.connect(newFile)
@@ -547,6 +643,7 @@ mainWindow.findChild(QAction, "actionAdd_Item").triggered.connect(addItemToStora
 newContWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newContainerProcess)
 newItemWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newItemProcess)
 addElementWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(addElementToStorageProcess)
+editElementWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(editElementProcess)
 
 containerTree.itemClicked.connect(getContainersFromStorage)
 itemTree.itemClicked.connect(getItemsFromStorage)
@@ -555,6 +652,7 @@ includeInheritance.stateChanged.connect(applyFilterToList)
 storageTree.itemDoubleClicked.connect(showProperties)
 
 typeSelect.itemSelectionChanged.connect(loadPropertiesOfElement)
+typeEdit.itemSelectionChanged.connect(loadPropertiesOfElementToEdit)
 
 # LAUNCH
 
