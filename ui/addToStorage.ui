@@ -23,19 +23,6 @@
    <item row="1" column="3">
     <widget class="QPlainTextEdit" name="propertyInput"/>
    </item>
-   <item row="2" column="1" colspan="3">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
-     </property>
-     <property name="centerButtons">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="2" colspan="2">
     <widget class="QLineEdit" name="nameInput"/>
    </item>
@@ -84,6 +71,26 @@
     <widget class="QListWidget" name="propertiesList">
      <property name="supportedDragActions">
       <set>Qt::DropAction::IgnoreAction</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="keepOpen">
+     <property name="text">
+      <string>Add and Keep Open</string>
      </property>
     </widget>
    </item>

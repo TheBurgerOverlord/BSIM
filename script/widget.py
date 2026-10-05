@@ -9,7 +9,8 @@ from zipfile import ZipFile
 from PySide6.QtGui import QAction
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QFileDialog, QTreeWidgetItem, QTreeWidget, QMessageBox, \
-    QDialogButtonBox, QLineEdit, QPlainTextEdit, QListView, QListWidget, QCheckBox
+    QDialogButtonBox, QLineEdit, QPlainTextEdit, QListView, QListWidget, QCheckBox, QPushButton
+
 
 # CONTAINERS
 
@@ -643,6 +644,7 @@ mainWindow.findChild(QAction, "actionAdd_Item").triggered.connect(addItemToStora
 newContWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newContainerProcess)
 newItemWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(newItemProcess)
 addElementWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(addElementToStorageProcess)
+addElementWindow.findChild(QPushButton, "keepOpen").clicked.connect(addElementToStorageProcess)
 editElementWindow.findChild(QDialogButtonBox, "buttonBox").accepted.connect(editElementProcess)
 
 containerTree.itemClicked.connect(getContainersFromStorage)
